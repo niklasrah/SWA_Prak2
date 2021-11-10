@@ -9,14 +9,14 @@ import java.util.Queue;
 public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     private ArrayList<T> elements;
-    private int writePos;
-    private int readPos;
+    private int writePos = 0;
+    private int readPos = 0;
     private int size;
     private int capacity;
     private boolean fixedCapacity;
     private boolean discarding;
 
-    public Ringpuffer(T t){
+    public Ringpuffer(){
         this.elements = new ArrayList<T>();
     }
 
@@ -97,9 +97,10 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     }
 
     @Override
-    public boolean add(Object e) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean add(T e) {
+        this.elements.add(this.writePos, e);
+        this.writePos++;
+        return true;
     }
 
     @Override
@@ -109,25 +110,26 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     }
 
     @Override
-    public Object remove() {
+    public T remove() {
+        T result = this.elements.get(this.readPos);
+        this.readPos++;
+        return result;
+    }
+
+    @Override
+    public T poll() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Object poll() {
+    public T element() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Object element() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Object peek() {
+    public T peek() {
         // TODO Auto-generated method stub
         return null;
     }
