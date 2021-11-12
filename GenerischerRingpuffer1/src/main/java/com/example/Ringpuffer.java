@@ -16,21 +16,29 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     private boolean fixedCapacity;
     private boolean discarding;
 
-    public Ringpuffer(int capacity){
+    public Ringpuffer(int capacity, boolean fixedCapacity, boolean discarding){
         this.elements = new ArrayList<T>();
         this.capacity = capacity;
+        this.fixedCapacity = fixedCapacity;
+        this.discarding = discarding;
+    }
+
+    public boolean setCapacity(int capacity) {
+        if (!this.fixedCapacity){
+            this.capacity = capacity;
+            return true;
+        }
+        return false;
     }
 
     @Override
     public int size() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.size;
     }
 
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.readPos == this.writePos;
     }
 
     @Override
@@ -89,27 +97,41 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public void clear() {
-        // TODO Auto-generated method stub
-        
+        this.readPos = this.writePos;
+        this.size = 0;
     }
 
     @Override
     public boolean add(T e) {
-        if(this.writePos == this.readPos && this.writePos != 0 && this.readPos != 0){
-            return false;
+
+        if(this.size() == capacity){
+            if(this.fixedCapacity){
+                if(!this.discarding){
+                    return false;
+                }
+            } else {
+                this.capacity *= 2;
+            }
+        }
+        if (this.elements.size() < this.capacity){
+            //add
+        } else {
+            //set
         }
         try{
+
             this.elements.get(this.writePos);
             this.elements.set(this.writePos, e);
         }catch(IndexOutOfBoundsException exception){
             this.elements.add(this.writePos, e);
         }
+        this.size++;
         if(this.writePos >= this.capacity - 1){
             this.writePos = 0;
         } else {
             this.writePos++;
         }
-        
+
         return true;
     }
 
@@ -123,6 +145,7 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     public T remove() {
         T result = this.elements.get(this.readPos);
         this.readPos++;
+        this.size--;
         return result;
     }
 
@@ -148,5 +171,5 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     public String toString(){
         return this.elements + " WritePos" + this.writePos + "; ReadPos" + this.readPos;
     }
-    
+
 }
