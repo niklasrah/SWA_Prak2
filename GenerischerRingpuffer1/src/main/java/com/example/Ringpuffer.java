@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 
 public class Ringpuffer<T> implements Queue<T>, Serializable{
@@ -43,19 +44,27 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public boolean contains(Object o) {
-        // TODO Auto-generated method stub
+        for(T el: this.elements){
+            T objectToFind;
+            try{
+                objectToFind = (T)o;
+            } catch (Exception e){
+                return false;
+            }
+            if(el == objectToFind){
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public Iterator iterator() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.elements.iterator();
     }
 
     @Override
     public Object[] toArray() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -67,7 +76,6 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public boolean remove(Object o) {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -79,8 +87,16 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public boolean addAll(Collection c) {
-        // TODO Auto-generated method stub
-        return false;
+        for(Object t : c){
+            T el;
+            try{
+                el = (T)t;
+            } catch (Exception e){
+                return false;
+            }
+            this.add(el);
+        }
+        return true;
     }
 
     @Override
@@ -103,33 +119,26 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public boolean add(T e) {
-
-        if(this.size() == capacity){
+        if(this.size() == capacity){ //Wenn die maximalgröße erreicht ist
             if(this.fixedCapacity){
                 if(!this.discarding){
-                    return false;
+                    return false; //wenn die Kapazität fest ist und werte nicht überschrieben werden dürfen
                 }
             } else {
-                this.capacity *= 2;
+                this.capacity *= 2; //Kapazität verdoppeln
             }
         }
-        if (this.elements.size() < this.capacity){
-            //add
-        } else {
-            //set
-        }
-        try{
-            this.elements.set(this.writePos, e);
-        }catch(IndexOutOfBoundsException exception){
+        if (this.elements.size() < this.capacity){ //ArrayList hat seine volle größe noch nicht erreicht
             this.elements.add(this.writePos, e);
+        } else {
+            this.elements.set(this.writePos, e);
         }
         this.size++;
-        if(this.writePos >= this.capacity - 1){
+        if(this.writePos >= this.capacity - 1){ //WritePos zurücksetzten wenn zeiger am ende der liste
             this.writePos = 0;
         } else {
             this.writePos++;
         }
-
         return true;
     }
 
@@ -140,7 +149,19 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     }
 
     @Override
-    public T remove() {
+    public T remove() throws NoSuchElementException {
+        T element = this.poll();
+        if(element == null){
+            throw new NoSuchElementException();
+        }
+        return element;
+    }
+
+    @Override
+    public T poll() {
+        if(this.size == 0){
+            return null;
+        }
         T result = this.elements.get(this.readPos);
         this.readPos++;
         this.size--;
@@ -148,21 +169,19 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     }
 
     @Override
-    public T poll() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public T element() {
-        // TODO Auto-generated method stub
-        return null;
+    public T element() throws NoSuchElementException {
+        if(this.size == 0){
+            throw new NoSuchElementException(); 
+        } 
+        return this.elements.get(this.readPos);
     }
 
     @Override
     public T peek() {
-        // TODO Auto-generated method stub
-        return null;
+        if(this.size == 0){
+            return null;
+        }
+        return this.elements.get(this.readPos);
     }
 
     @Override
