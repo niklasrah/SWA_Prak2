@@ -1,7 +1,5 @@
 package com.example;
 
-import java.util.ArrayList;
-
 public final class App {
     /**
      * @param args The arguments of the program.

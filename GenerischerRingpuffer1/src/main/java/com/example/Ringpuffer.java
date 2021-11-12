@@ -119,8 +119,6 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
             //set
         }
         try{
-
-            this.elements.get(this.writePos);
             this.elements.set(this.writePos, e);
         }catch(IndexOutOfBoundsException exception){
             this.elements.add(this.writePos, e);
