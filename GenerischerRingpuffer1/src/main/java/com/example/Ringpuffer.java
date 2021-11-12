@@ -16,11 +16,8 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     private boolean fixedCapacity;
     private boolean discarding;
 
-    public Ringpuffer(){
+    public Ringpuffer(int capacity){
         this.elements = new ArrayList<T>();
-    }
-
-    public void setCapacity(int capacity){
         this.capacity = capacity;
     }
 
@@ -98,8 +95,21 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public boolean add(T e) {
-        this.elements.add(this.writePos, e);
-        this.writePos++;
+        if(this.writePos == this.readPos && this.writePos != 0 && this.readPos != 0){
+            return false;
+        }
+        try{
+            this.elements.get(this.writePos);
+            this.elements.set(this.writePos, e);
+        }catch(IndexOutOfBoundsException exception){
+            this.elements.add(this.writePos, e);
+        }
+        if(this.writePos >= this.capacity - 1){
+            this.writePos = 0;
+        } else {
+            this.writePos++;
+        }
+        
         return true;
     }
 
@@ -132,6 +142,11 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     public T peek() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public String toString(){
+        return this.elements + " WritePos" + this.writePos + "; ReadPos" + this.readPos;
     }
     
 }
