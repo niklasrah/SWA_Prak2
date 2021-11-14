@@ -149,40 +149,34 @@ public class Ringpuffer<T> implements Queue<T>, Serializable {
             throw new NullPointerException();
         }
         if (this.size() == capacity) { // Wenn die maximalgroesse erreicht ist
-            if (this.fixedCapacity) {
+            if (this.fixedCapacity) { // ist die Groeße fix?
                 if (!this.discarding) {
-                    throw new IllegalStateException(); // wenn die Kapazitaet fest ist und werte nicht ueberschrieben
-                                                       // werden duerfen
+                    throw new IllegalStateException(); // Kapazitaet fest ist und werte nicht ueberschrieben werden
+                                                       // duerfen
                 }
             } else {
                 this.capacity *= 2; // Kapazitaet verdoppeln
             }
         }
-        if (this.elements.size() < this.capacity) { // ArrayList hat seine volle groesse noch nicht erreicht
-            if (this.readPos >= this.writePos && this.size > 0) {
-                this.readPos++;
+        if (this.elements.size() < this.capacity) { // ArrayList noch nicht voll (Kapazität wurde erhöht)
+            if (this.readPos >= this.writePos && this.size() > 0) {
+                this.readPosIncrementIfNotFull();
             }
-            this.elements.add(this.writePos, e);
+            this.elements.add(this.writePos, e); // Add wenn ArrayList noch nicht voll
             this.size++;
         } else {
-            this.elements.set(this.writePos, e);
-            if (discarding && this.size == this.capacity) {
-                if (this.readPos >= this.capacity - 1) { // ReadPos zuruecksetzten wenn zeiger am ende der liste
-                    this.readPos = 0;
-                } else {
-                    this.readPos++;
+            this.elements.set(this.writePos, e); // Set wenn ArrayList voll ist
+            if (this.discarding) {
+                if (this.size() == this.capacity) {
+                    this.readPosIncrementIfNotFull();
+                } else if (this.size() < this.capacity) {
+                    this.size++;
                 }
-            }
-            if (discarding && this.size < this.capacity) {
+            } else {
                 this.size++;
             }
-
         }
-        if (this.writePos >= this.capacity - 1) { // WritePos zuruecksetzten wenn zeiger am ende der liste
-            this.writePos = 0;
-        } else {
-            this.writePos++;
-        }
+        this.writePosIncrementIfNotFull();
         return true;
     }
 
@@ -211,11 +205,7 @@ public class Ringpuffer<T> implements Queue<T>, Serializable {
             return null;
         }
         T result = this.elements.get(this.readPos);
-        if (this.readPos >= this.capacity - 1) { // readPos zuruecksetzten wenn zeiger am ende der liste
-            this.readPos = 0;
-        } else {
-            this.readPos++;
-        }
+        this.readPosIncrementIfNotFull();
         this.size--;
         return result;
     }
@@ -258,6 +248,22 @@ public class Ringpuffer<T> implements Queue<T>, Serializable {
             }
         }
         return arraylist;
+    }
+
+    private void readPosIncrementIfNotFull() {
+        if (this.readPos >= this.capacity - 1) {
+            this.readPos = 0;
+        } else {
+            this.readPos++;
+        }
+    }
+
+    private void writePosIncrementIfNotFull() {
+        if (this.writePos >= this.capacity - 1) {
+            this.writePos = 0;
+        } else {
+            this.writePos++;
+        }
     }
 
 }

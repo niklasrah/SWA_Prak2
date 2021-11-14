@@ -39,6 +39,9 @@ public final class App {
         System.out.println(ringFixedDis);
         ringFixedDis.add(5);
         System.out.println(ringFixedDis);
+        System.out.println("clear");
+        ringFixedDis.clear();
+        System.out.println(ringFixedDis);
 
         System.out.println("");
         System.out.println("Test einer NotFixedRingliste");
