@@ -13,6 +13,8 @@ public final class App {
         System.out.println(ring);
         ring.remove();
         System.out.println(ring);
+        ring.remove();
+        System.out.println(ring);
         ring.add(3);
         System.out.println(ring);
         ring.add(4);
