@@ -25,5 +25,9 @@ public final class App {
         System.out.println(ring);
         ring.add(8);
         System.out.println(ring);
+        ring.add(9);
+        System.out.println(ring);
+        ring.add(10);
+        System.out.println(ring);
     }
 }

@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-public class Ringpuffer<T> implements Queue<T>, Serializable{
+public class Ringpuffer<T> implements Queue<T>, Serializable {
 
     private ArrayList<T> elements;
     private int writePos = 0;
@@ -17,7 +17,7 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     private boolean fixedCapacity;
     private boolean discarding;
 
-    public Ringpuffer(int capacity, boolean fixedCapacity, boolean discarding){
+    public Ringpuffer(int capacity, boolean fixedCapacity, boolean discarding) {
         this.elements = new ArrayList<T>();
         this.capacity = capacity;
         this.fixedCapacity = fixedCapacity;
@@ -25,7 +25,7 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     }
 
     public boolean setCapacity(int capacity) {
-        if (!this.fixedCapacity){
+        if (!this.fixedCapacity) {
             this.capacity = capacity;
             return true;
         }
@@ -44,14 +44,14 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public boolean contains(Object o) {
-        for(T el: this.elements){
+        for (T el : this.elements) {
             T objectToFind;
-            try{
-                objectToFind = (T)o;
-            } catch (Exception e){
+            try {
+                objectToFind = (T) o;
+            } catch (Exception e) {
                 return false;
             }
-            if(el == objectToFind){
+            if (el == objectToFind) {
                 return true;
             }
         }
@@ -87,11 +87,11 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public boolean addAll(Collection c) {
-        for(Object t : c){
+        for (Object t : c) {
             T el;
-            try{
-                el = (T)t;
-            } catch (Exception e){
+            try {
+                el = (T) t;
+            } catch (Exception e) {
                 return false;
             }
             this.add(el);
@@ -119,22 +119,22 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public boolean add(T e) {
-        if(this.size() == capacity){ //Wenn die maximalgröße erreicht ist
-            if(this.fixedCapacity){
-                if(!this.discarding){
-                    return false; //wenn die Kapazität fest ist und werte nicht überschrieben werden dürfen
+        if (this.size() == capacity) { // Wenn die maximalgröße erreicht ist
+            if (this.fixedCapacity) {
+                if (!this.discarding) {
+                    return false; // wenn die Kapazität fest ist und werte nicht überschrieben werden dürfen
                 }
             } else {
-                this.capacity *= 2; //Kapazität verdoppeln
+                this.capacity *= 2; // Kapazität verdoppeln
             }
         }
-        if (this.elements.size() < this.capacity){ //ArrayList hat seine volle größe noch nicht erreicht
+        if (this.elements.size() < this.capacity) { // ArrayList hat seine volle größe noch nicht erreicht
             this.elements.add(this.writePos, e);
         } else {
             this.elements.set(this.writePos, e);
         }
         this.size++;
-        if(this.writePos >= this.capacity - 1){ //WritePos zurücksetzten wenn zeiger am ende der liste
+        if (this.writePos >= this.capacity - 1) { // WritePos zurücksetzten wenn zeiger am ende der liste
             this.writePos = 0;
         } else {
             this.writePos++;
@@ -151,7 +151,7 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
     @Override
     public T remove() throws NoSuchElementException {
         T element = this.poll();
-        if(element == null){
+        if (element == null) {
             throw new NoSuchElementException();
         }
         return element;
@@ -159,7 +159,7 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public T poll() {
-        if(this.size == 0){
+        if (this.size == 0) {
             return null;
         }
         T result = this.elements.get(this.readPos);
@@ -170,22 +170,22 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public T element() throws NoSuchElementException {
-        if(this.size == 0){
-            throw new NoSuchElementException(); 
-        } 
+        if (this.size == 0) {
+            throw new NoSuchElementException();
+        }
         return this.elements.get(this.readPos);
     }
 
     @Override
     public T peek() {
-        if(this.size == 0){
+        if (this.size == 0) {
             return null;
         }
         return this.elements.get(this.readPos);
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.elements + " WritePos" + this.writePos + "; ReadPos" + this.readPos;
     }
 
