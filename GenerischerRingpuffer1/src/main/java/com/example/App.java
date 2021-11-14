@@ -1,5 +1,8 @@
 package com.example;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public final class App {
     /**
      * @param args The arguments of the program.
@@ -10,10 +13,6 @@ public final class App {
         ring.add(1);
         System.out.println(ring);
         ring.add(2);
-        System.out.println(ring);
-        ring.remove();
-        System.out.println(ring);
-        ring.remove();
         System.out.println(ring);
         ring.add(3);
         System.out.println(ring);
@@ -31,5 +30,17 @@ public final class App {
         System.out.println(ring);
         ring.add(10);
         System.out.println(ring);
+        // ring.remove(1);
+        System.out.println(ring);
+
+        ArrayList<Integer> array = new ArrayList<Integer>();
+        array.add(1);
+        array.add(3);
+        array.add(2);
+        ring.retainAll(array);
+        System.out.println(ring.contains(2));
+        for (Object el : ring.toArray()) {
+            System.out.println(el + " ");
+        }
     }
 }
