@@ -163,10 +163,21 @@ public class Ringpuffer<T> implements Queue<T>, Serializable {
                 this.readPos++;
             }
             this.elements.add(this.writePos, e);
+            this.size++;
         } else {
             this.elements.set(this.writePos, e);
+            if (discarding && this.size == this.capacity) {
+                if (this.readPos >= this.capacity - 1) { // ReadPos zuruecksetzten wenn zeiger am ende der liste
+                    this.readPos = 0;
+                } else {
+                    this.readPos++;
+                }
+            }
+            if (discarding && this.size < this.capacity) {
+                this.size++;
+            }
+
         }
-        this.size++;
         if (this.writePos >= this.capacity - 1) { // WritePos zuruecksetzten wenn zeiger am ende der liste
             this.writePos = 0;
         } else {
@@ -227,12 +238,18 @@ public class Ringpuffer<T> implements Queue<T>, Serializable {
 
     @Override
     public String toString() {
-        return "WritePos" + this.writePos + "; ReadPos" + this.readPos + "; Size:" + this.size + "\t " + this.elements;
+        return this.toArrayList() + "";
+        // return "WritePos" + this.writePos + "; ReadPos" + this.readPos + "; Size:" +
+        // this.size + "\t " + this.elements;
     }
 
     private ArrayList<T> toArrayList() {
         ArrayList<T> arraylist = new ArrayList<T>();
-        for (int i = this.readPos; i < this.size && (i < this.writePos || this.writePos <= this.readPos); i++) {
+        if (this.size == 0) {
+            return arraylist;
+        }
+        for (int i = this.readPos; i < this.elements.size()
+                && (i < this.writePos || this.writePos <= this.readPos); i++) {
             arraylist.add(this.elements.get(i));
         }
         if (this.readPos >= this.writePos) {
