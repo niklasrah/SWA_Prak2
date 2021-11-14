@@ -107,6 +107,7 @@ public class Ringpuffer<T> implements Queue<T>, Serializable{
 
     @Override
     public boolean retainAll(Collection c) {
+        // TODO Auto-generated method stub
         return false;
     }
 
