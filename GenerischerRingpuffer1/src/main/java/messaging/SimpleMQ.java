@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import com.example.Ringpuffer;
+import com.ringpuffer.Ringpuffer;
 
 public class SimpleMQ<T> {
     private final static SimpleMQ OBJ = new SimpleMQ();

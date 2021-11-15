@@ -1,4 +1,4 @@
-package com.example;
+package com.ringpuffer;
 
 public final class App {
     /**
