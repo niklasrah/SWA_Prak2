@@ -60,7 +60,7 @@ public class Ringpuffer<T> implements Queue<T>, Serializable {
 
     @Override
     public Iterator iterator() {
-        return this.elements.iterator();
+        return this.toArrayList().iterator();
     }
 
     @Override
